@@ -46,6 +46,10 @@
 }
 
 :root {
+  /* Habla ships a single warm-paper palette. Declaring the scheme stops mobile
+     browsers (Android Chrome auto dark theme, Samsung Internet dark mode) from
+     force-inverting the page into an unreadable black screen. */
+  color-scheme: light;
   --radius: 1rem;
   /* Warm paper */
   --background: oklch(0.982 0.012 85);
@@ -136,7 +140,9 @@
     radial-gradient(ellipse 70% 40% at 12% -5%, oklch(0.72 0.13 178 / 0.22), transparent 65%),
     radial-gradient(ellipse 60% 34% at 95% 8%, oklch(0.68 0.18 32 / 0.16), transparent 62%),
     radial-gradient(ellipse 80% 40% at 50% 108%, oklch(0.83 0.15 82 / 0.2), transparent 68%);
-  background-attachment: fixed;
+  /* `fixed` forces a full-viewport compositing layer; on mobile GPUs this can
+     drop out and paint the whole screen black a moment after load. */
+  background-attachment: scroll;
 }
 
 /* Chunky rounded card with a soft drop. */

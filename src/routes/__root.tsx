@@ -90,6 +90,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "FSI/DLI-inspired immersive language training: pattern drills, shadowing, spoken field interrogations and spaced recall.",
       },
       { name: "theme-color", content: "#FFF7EE" },
+      { name: "color-scheme", content: "light" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

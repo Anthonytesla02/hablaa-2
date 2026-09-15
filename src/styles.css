@@ -46,6 +46,10 @@
 }
 
 :root {
+  /* Habla ships a single warm-paper palette. Declaring the scheme stops mobile
+     browsers (Android Chrome auto dark theme, Samsung Internet dark mode) from
+     force-inverting the page into an unreadable black screen. */
+  color-scheme: light;
   --radius: 1rem;
   /* Warm paper */
   --background: oklch(0.982 0.012 85);

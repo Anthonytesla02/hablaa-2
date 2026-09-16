@@ -27,7 +27,13 @@ function AuthGate() {
       setReady(true);
 
       // Subscribe to store changes → debounced cloud save
-      const unsub = useAppSubscribe(session.user.id);
+      const userId = session.user.id;
+      const unsub = useApp.subscribe(() => scheduleCloudSave(userId));
+
+      // Make sure nothing is lost on reload / tab switch
+      const onHide = () => flushCloudSave();
+      window.addEventListener("pagehide", onHide);
+      document.addEventListener("visibilitychange", onHide);
 
       // Listen for sign-out
       const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
@@ -39,6 +45,8 @@ function AuthGate() {
 
       return () => {
         unsub();
+        window.removeEventListener("pagehide", onHide);
+        document.removeEventListener("visibilitychange", onHide);
         authListener.subscription.unsubscribe();
       };
     }

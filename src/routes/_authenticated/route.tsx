@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import avatarLoadingVideo from "@/assets/habla-avatar-loading.mp4.asset.json";
 import { supabase } from "@/integrations/supabase/client";
 import { syncFromCloud, scheduleCloudSave } from "@/lib/cloud-sync";
 
@@ -57,10 +58,17 @@ function AuthGate() {
 
   if (!ready) {
     return (
-      <div className="topo flex min-h-[100dvh] items-center justify-center">
-        <p className="hud animate-pulse text-xs text-muted-foreground">
-          ESTABLISHING CONNECTION…
-        </p>
+      <div className="flex min-h-[100dvh] items-center justify-center overflow-hidden bg-background">
+        <video
+          src={avatarLoadingVideo.url}
+          aria-label="Habla avatar loading"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          className="max-h-[80dvh] w-[min(88vw,24rem)] object-contain"
+        />
       </div>
     );
   }

@@ -47,6 +47,12 @@ export async function syncFromCloud(userId: string): Promise<void> {
     .limit(30);
 
   if (profileRow) {
+    // Never let a stale cloud row wipe progress that is already ahead locally
+    // (e.g. a debounced save that has not landed yet).
+    const keepMax = <K extends "xp" | "weeklyXp" | "credits" | "streak" | "longestStreak">(
+      key: K,
+      cloudValue: number,
+    ) => Math.max(cloudValue ?? 0, (store[key] as number) ?? 0);
     const cards: Record<string, SrsCard> = {};
     for (const c of cardRows ?? []) {
       cards[c.id] = {

@@ -2,7 +2,8 @@ import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import avatarLoadingVideo from "@/assets/habla-avatar-loading.mp4.asset.json";
 import { supabase } from "@/integrations/supabase/client";
-import { syncFromCloud, scheduleCloudSave } from "@/lib/cloud-sync";
+import { syncFromCloud, scheduleCloudSave, flushCloudSave } from "@/lib/cloud-sync";
+import { useApp } from "@/lib/store";
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthGate,

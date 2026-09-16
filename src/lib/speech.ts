@@ -146,6 +146,37 @@ const NEURAL_VOICE = { male: "ash", female: "shimmer" } as const;
 const audioCache = new Map<string, string>();
 let currentAudio: HTMLAudioElement | null = null;
 let neuralBroken = false;
+let unlocked = false;
+
+/**
+ * Mobile browsers only allow audio that starts from a user gesture. Play a
+ * silent clip on the very first tap so later playback is allowed.
+ */
+export function unlockAudio() {
+  if (unlocked || typeof window === "undefined") return;
+  unlocked = true;
+  try {
+    const a = new Audio(
+      "data:audio/mpeg;base64,//uQxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAACcQCA",
+    );
+    a.volume = 0;
+    void a.play().catch(() => {});
+  } catch {
+    /* noop */
+  }
+  try {
+    if (ttsSupported()) window.speechSynthesis.resume();
+  } catch {
+    /* noop */
+  }
+}
+
+if (typeof window !== "undefined") {
+  const on = () => unlockAudio();
+  window.addEventListener("pointerdown", on, { once: true, capture: true });
+  window.addEventListener("touchstart", on, { once: true, capture: true });
+  window.addEventListener("keydown", on, { once: true, capture: true });
+}
 
 async function speakNeural(
   text: string,
@@ -218,8 +249,10 @@ export async function speak(
   preferredGender?: "male" | "female",
 ): Promise<void> {
   if (!text) return;
-  if (preferredGender) {
-    const ok = await speakNeural(text, locale, rate, preferredGender);
+  // Always try the neural voice first: device speech engines are missing or
+  // silently blocked on a lot of mobile browsers.
+  {
+    const ok = await speakNeural(text, locale, rate, preferredGender ?? "female");
     setSpeaking({ speaking: false, text: "", locale: "" });
     if (ok) return;
   }

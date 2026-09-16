@@ -36,6 +36,8 @@ type State = {
   lastActiveDay: string | null;
   longestStreak: number;
   freezes: number;
+  /** Shop items owned, by item id. One-time unlocks sit at 1. */
+  inventory: Record<string, number>;
   badges: string[];
   cards: Record<string, SrsCard>;
   completedDays: string[];
@@ -80,6 +82,7 @@ type State = {
   registerLogin: () => void;
   addXp: (n: number) => void;
   spend: (n: number) => boolean;
+  purchase: (id: string, cost: number) => boolean;
   grantBadge: (id: string) => void;
   reviewCard: (id: string, outcome: Outcome | boolean) => void;
   completeChallenge: (id: string, xp: number) => void;
@@ -160,6 +163,7 @@ const initial = {
   lastActiveDay: null,
   longestStreak: 0,
   freezes: 0,
+  inventory: {} as Record<string, number>,
   badges: [] as string[],
   cards: {} as Record<string, SrsCard>,
   completedDays: [] as string[],
@@ -219,6 +223,17 @@ export const useApp = create<State>()(
       spend: (n) => {
         if (get().credits < n) return false;
         set((s) => ({ credits: s.credits - n }));
+        return true;
+      },
+
+      purchase: (id, cost) => {
+        const s = get();
+        if (s.credits < cost) return false;
+        set({
+          credits: s.credits - cost,
+          inventory: { ...s.inventory, [id]: (s.inventory[id] ?? 0) + 1 },
+          freezes: id === "cover_extension" ? s.freezes + 1 : s.freezes,
+        });
         return true;
       },
 

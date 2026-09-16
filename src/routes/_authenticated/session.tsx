@@ -20,6 +20,32 @@ import { courseLessons } from "@/lib/course";
 import { stopSpeaking } from "@/lib/speech";
 import { useApp } from "@/lib/store";
 import { dueCards } from "@/lib/srs";
+import mascot from "@/assets/mascot-llama.png.asset.json";
+
+const TILE_TONE = {
+  amber: "border-amber text-amber",
+  primary: "border-primary text-primary",
+  secondary: "border-secondary text-secondary",
+} as const;
+
+function StatTile({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: string;
+  tone: keyof typeof TILE_TONE;
+}) {
+  return (
+    <div className={`rounded-2xl border-2 bg-card p-1 ${TILE_TONE[tone]}`}>
+      <p className="hud py-1 text-center text-[9px]">{label}</p>
+      <div className="rounded-xl bg-muted py-3">
+        <p className="text-center text-lg font-extrabold">{value}</p>
+      </div>
+    </div>
+  );
+}
 
 type Mode = "mission" | "review" | "checkpoint";
 

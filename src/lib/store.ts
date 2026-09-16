@@ -36,6 +36,8 @@ type State = {
   lastActiveDay: string | null;
   longestStreak: number;
   freezes: number;
+  /** Shop items owned, by item id. One-time unlocks sit at 1. */
+  inventory: Record<string, number>;
   badges: string[];
   cards: Record<string, SrsCard>;
   completedDays: string[];
@@ -80,6 +82,7 @@ type State = {
   registerLogin: () => void;
   addXp: (n: number) => void;
   spend: (n: number) => boolean;
+  purchase: (id: string, cost: number) => boolean;
   grantBadge: (id: string) => void;
   reviewCard: (id: string, outcome: Outcome | boolean) => void;
   completeChallenge: (id: string, xp: number) => void;

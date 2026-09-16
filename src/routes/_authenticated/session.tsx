@@ -180,6 +180,9 @@ function SessionPage() {
         sfx("transition");
         if (!passed) {
           resetRun();
+        } else if (!useApp.getState().streakCelebrated) {
+          // First streak of their life — celebrate it before anything else.
+          void navigate({ to: "/streak" });
         } else if (lesson) {
           // Straight into today's practice chat — apply what was just learned.
           void navigate({ to: "/simulate", search: { daily: lesson.id } });

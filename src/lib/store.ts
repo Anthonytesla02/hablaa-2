@@ -314,6 +314,15 @@ export const useApp = create<State>()(
 
       setSetting: (k, v) => set((s) => ({ settings: { ...s.settings, [k]: v } })),
 
+      markStreakCelebrated: () => set({ streakCelebrated: true }),
+
+      commitStreakGoal: (days, reward) =>
+        set((s) => ({
+          streakGoal: days,
+          streakCelebrated: true,
+          credits: s.credits + reward,
+        })),
+
       setCloudSync: (active, userId) => set({ cloudSyncActive: active, cloudUserId: userId }),
 
       setCompanion: (c) =>

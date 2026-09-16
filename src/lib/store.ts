@@ -62,6 +62,11 @@ type State = {
   tutorialStep: number;
   tutorialDone: boolean;
 
+  /** Streak goal the learner committed to, in days. Null until they commit. */
+  streakGoal: number | null;
+  /** Has the first-streak celebration been shown? */
+  streakCelebrated: boolean;
+
   /** Who your language partner is. Null until they pick one. */
   companion: CompanionConfig | null;
   /** What the AI remembers you keep getting wrong. */

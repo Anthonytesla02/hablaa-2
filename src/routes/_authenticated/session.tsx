@@ -20,6 +20,32 @@ import { courseLessons } from "@/lib/course";
 import { stopSpeaking } from "@/lib/speech";
 import { useApp } from "@/lib/store";
 import { dueCards } from "@/lib/srs";
+import mascot from "@/assets/mascot-llama.png.asset.json";
+
+const TILE_TONE = {
+  amber: "border-amber text-amber",
+  primary: "border-primary text-primary",
+  secondary: "border-secondary text-secondary",
+} as const;
+
+function StatTile({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: string;
+  tone: keyof typeof TILE_TONE;
+}) {
+  return (
+    <div className={`rounded-2xl border-2 bg-card p-1 ${TILE_TONE[tone]}`}>
+      <p className="hud py-1 text-center text-[9px]">{label}</p>
+      <div className="rounded-xl bg-muted py-3">
+        <p className="text-center text-lg font-extrabold">{value}</p>
+      </div>
+    </div>
+  );
+}
 
 type Mode = "mission" | "review" | "checkpoint";
 
@@ -279,58 +305,60 @@ function SessionPage() {
 
   if (finished) {
     const accuracy = graded === 0 ? 1 : right / graded;
+    const seconds = Math.max(1, Math.round((Date.now() - startedAt) / 1000));
+    const clock = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+    const accuracyPct = Math.round(accuracy * 100);
+
     return (
-      <div className="topo mx-auto flex min-h-[100dvh] w-full max-w-md flex-col justify-center px-5">
-        <div className="paper-card p-5">
-          <p className="stamp stamp-in inline-block text-destructive">
-            {passed ? "LESSON COMPLETE" : "LET'S TRY AGAIN"}
+      <div className="topo mx-auto flex min-h-[100dvh] w-full max-w-md flex-col justify-center px-5 py-8">
+        <div className="flex flex-col items-center text-center">
+          <img
+            src={mascot.url}
+            alt="Habla mascot celebrating"
+            className="seal-in h-40 w-40 object-contain drop-shadow-[0_18px_24px_rgba(0,0,0,0.18)]"
+          />
+          <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-amber">
+            {passed ? "You're a learner!" : "Almost there!"}
+          </h1>
+          <p className="mt-2 text-base text-muted-foreground">
+            {passed ? "I'm proud of you already!!" : "Run it back — your XP is already banked."}
           </p>
-          <h1 className="hud mt-4 text-lg">Your results</h1>
-          <dl className="hud mt-4 space-y-2 text-[11px]">
-            <div className="flex justify-between">
-              <dt>XP earned</dt>
-              <dd>{xp}</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt>Accuracy</dt>
-              <dd>{Math.round(accuracy * 100)}%</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt>Questions</dt>
-              <dd>{graded}</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt>Hearts left</dt>
-              <dd>{cover}/5</dd>
-            </div>
-          </dl>
-          {threshold > 0 && (
-            <p className="hud mt-3 text-[10px] text-muted-foreground">
-              Pass mark · {Math.round(threshold * 100)}%
-            </p>
-          )}
-          <p className="mt-4 text-sm">
-            {passed
-              ? "Nice work! Anything you missed goes into your practice deck and comes back later."
-              : `Below the ${Math.round(threshold * 100)}% pass mark, so let\u2019s run it again right now — no penalty, and your XP is already banked.`}
-          </p>
-          {handoff && (
-            <p className="hud mt-4 flex items-center gap-2 text-[10px] text-secondary">
-              <span className="h-1.5 w-1.5 animate-ping rounded-full bg-secondary" />
-              {passed
-                ? lesson
-                  ? "OPENING PRACTICE CHAT…"
-                  : "LOADING THE NEXT LESSON…"
-                : "STARTING IT AGAIN…"}
-            </p>
-          )}
         </div>
-        <div className="mt-4">
+
+        <div className="mt-8 grid grid-cols-3 gap-2.5">
+          <StatTile label="TOTAL XP" value={`${xp}`} tone="amber" />
+          <StatTile label="ACCURACY" value={`${accuracyPct}%`} tone="primary" />
+          <StatTile label="SPEEDY" value={clock} tone="secondary" />
+        </div>
+
+        <p className="hud mt-4 text-center text-[10px] text-muted-foreground">
+          {graded} QUESTIONS · {cover}/5 HEARTS LEFT
+          {threshold > 0 ? ` · PASS ${Math.round(threshold * 100)}%` : ""}
+        </p>
+
+        <p className="mt-4 text-center text-sm text-muted-foreground">
+          {passed
+            ? "Anything you missed goes into your practice deck and comes back later."
+            : `Below the ${Math.round(threshold * 100)}% pass mark, so let\u2019s run it again right now — no penalty.`}
+        </p>
+
+        {handoff && (
+          <p className="hud mt-4 flex items-center justify-center gap-2 text-[10px] text-secondary">
+            <span className="h-1.5 w-1.5 animate-ping rounded-full bg-secondary" />
+            {passed
+              ? lesson
+                ? "OPENING PRACTICE CHAT…"
+                : "LOADING THE NEXT LESSON…"
+              : "STARTING IT AGAIN…"}
+          </p>
+        )}
+
+        <div className="mt-6">
           <ShareCard
             stats={{
               title: lesson ? lesson.title : "Daily lesson",
               flag: character?.flag ?? "🇪🇸",
-              seconds: (Date.now() - startedAt) / 1000,
+              seconds,
               accuracy,
               crimes: Math.max(0, graded - right),
               xp,
@@ -338,9 +366,14 @@ function SessionPage() {
             }}
           />
         </div>
-        <Link to="/dashboard" className="hud mt-4 rounded-sm border border-border py-3.5 text-center text-xs text-muted-foreground">
-          BACK TO MAP
+
+        <Link
+          to="/dashboard"
+          className="hud mt-4 rounded-2xl bg-primary py-4 text-center text-xs text-primary-foreground shadow-[0_5px_0_-1px_color-mix(in_oklab,var(--primary)_60%,black)] active:translate-y-[2px] active:shadow-none"
+        >
+          CLAIM {xp} XP
         </Link>
+
         {celebrate && (
           <Completion
             title={passed ? "Lesson complete!" : "Almost there!"}

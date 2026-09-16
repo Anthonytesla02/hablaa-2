@@ -5,8 +5,8 @@ import { Hydrated } from "@/components/AppFrame";
 import { Completion } from "@/components/Completion";
 import { sfx } from "@/lib/sfx";
 import { useApp } from "@/lib/store";
-import mascot from "@/assets/mascot-llama.png.asset.json";
-import calendarLlama from "@/assets/llama-calendar.jpg.asset.json";
+import mascot from "@/assets/llama-cheer.png.asset.json";
+import calendarLlama from "@/assets/llama-calendar.png.asset.json";
 
 const GOALS = [
   { days: 7, reward: 35 },
@@ -202,7 +202,7 @@ function StreakPage() {
         <img
           src={calendarLlama.url}
           alt="Habla llama pointing at a calendar"
-          className="seal-in h-44 w-44 rounded-3xl object-contain"
+          className="seal-in h-44 w-44 object-contain"
         />
         <p className="hud mt-6 text-[10px] text-secondary">TAKING YOU BACK TO YOUR LESSONS…</p>
       </div>
@@ -220,7 +220,7 @@ function StreakPage() {
         <img
           src={calendarLlama.url}
           alt="Habla llama pointing at a calendar"
-          className="bounce-soft mt-6 h-40 w-40 rounded-3xl object-contain"
+          className="bounce-soft mt-6 h-40 w-40 object-contain drop-shadow-[0_18px_24px_rgba(0,0,0,0.18)]"
         />
       </div>
 

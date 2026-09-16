@@ -62,6 +62,11 @@ type State = {
   tutorialStep: number;
   tutorialDone: boolean;
 
+  /** Streak goal the learner committed to, in days. Null until they commit. */
+  streakGoal: number | null;
+  /** Has the first-streak celebration been shown? */
+  streakCelebrated: boolean;
+
   /** Who your language partner is. Null until they pick one. */
   companion: CompanionConfig | null;
   /** What the AI remembers you keep getting wrong. */
@@ -91,6 +96,8 @@ type State = {
   startTutorial: () => void;
   setTutorialStep: (n: number) => void;
   endTutorial: () => void;
+  markStreakCelebrated: () => void;
+  commitStreakGoal: (days: number, reward: number) => void;
 };
 
 export type CompanionConfig = {
@@ -176,6 +183,9 @@ const initial = {
   mistakeMemory: {} as Record<string, MistakeNote>,
   tutorialStep: -1,
   tutorialDone: false,
+  streakGoal: null as number | null,
+  streakCelebrated: false,
+
 
 };
 
@@ -303,6 +313,15 @@ export const useApp = create<State>()(
         }),
 
       setSetting: (k, v) => set((s) => ({ settings: { ...s.settings, [k]: v } })),
+
+      markStreakCelebrated: () => set({ streakCelebrated: true }),
+
+      commitStreakGoal: (days, reward) =>
+        set((s) => ({
+          streakGoal: days,
+          streakCelebrated: true,
+          credits: s.credits + reward,
+        })),
 
       setCloudSync: (active, userId) => set({ cloudSyncActive: active, cloudUserId: userId }),
 

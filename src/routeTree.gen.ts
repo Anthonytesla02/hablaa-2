@@ -27,6 +27,7 @@ import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedSessionRouteImport } from './routes/_authenticated/session'
 import { Route as AuthenticatedShopRouteImport } from './routes/_authenticated/shop'
 import { Route as AuthenticatedSimulateRouteImport } from './routes/_authenticated/simulate'
+import { Route as AuthenticatedStreakRouteImport } from './routes/_authenticated/streak'
 import { Route as AuthenticatedVaultRouteImport } from './routes/_authenticated/vault'
 import { Route as ApiTtsRouteImport } from './routes/api/tts'
 
@@ -119,6 +120,11 @@ const AuthenticatedSimulateRoute = AuthenticatedSimulateRouteImport.update({
   path: '/simulate',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedStreakRoute = AuthenticatedStreakRouteImport.update({
+  id: '/streak',
+  path: '/streak',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedVaultRoute = AuthenticatedVaultRouteImport.update({
   id: '/vault',
   path: '/vault',
@@ -148,6 +154,7 @@ export interface FileRoutesByFullPath {
   '/session': typeof AuthenticatedSessionRoute
   '/shop': typeof AuthenticatedShopRoute
   '/simulate': typeof AuthenticatedSimulateRoute
+  '/streak': typeof AuthenticatedStreakRoute
   '/vault': typeof AuthenticatedVaultRoute
   '/api/tts': typeof ApiTtsRoute
 }
@@ -169,6 +176,7 @@ export interface FileRoutesByTo {
   '/session': typeof AuthenticatedSessionRoute
   '/shop': typeof AuthenticatedShopRoute
   '/simulate': typeof AuthenticatedSimulateRoute
+  '/streak': typeof AuthenticatedStreakRoute
   '/vault': typeof AuthenticatedVaultRoute
   '/api/tts': typeof ApiTtsRoute
 }
@@ -192,6 +200,7 @@ export interface FileRoutesById {
   '/_authenticated/session': typeof AuthenticatedSessionRoute
   '/_authenticated/shop': typeof AuthenticatedShopRoute
   '/_authenticated/simulate': typeof AuthenticatedSimulateRoute
+  '/_authenticated/streak': typeof AuthenticatedStreakRoute
   '/_authenticated/vault': typeof AuthenticatedVaultRoute
   '/api/tts': typeof ApiTtsRoute
 }
@@ -215,6 +224,7 @@ export interface FileRouteTypes {
     | '/session'
     | '/shop'
     | '/simulate'
+    | '/streak'
     | '/vault'
     | '/api/tts'
   fileRoutesByTo: FileRoutesByTo
@@ -236,6 +246,7 @@ export interface FileRouteTypes {
     | '/session'
     | '/shop'
     | '/simulate'
+    | '/streak'
     | '/vault'
     | '/api/tts'
   id:
@@ -258,6 +269,7 @@ export interface FileRouteTypes {
     | '/_authenticated/session'
     | '/_authenticated/shop'
     | '/_authenticated/simulate'
+    | '/_authenticated/streak'
     | '/_authenticated/vault'
     | '/api/tts'
   fileRoutesById: FileRoutesById
@@ -404,6 +416,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSimulateRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/streak': {
+      id: '/_authenticated/streak'
+      path: '/streak'
+      fullPath: '/streak'
+      preLoaderRoute: typeof AuthenticatedStreakRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/vault': {
       id: '/_authenticated/vault'
       path: '/vault'
@@ -430,6 +449,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSessionRoute: typeof AuthenticatedSessionRoute
   AuthenticatedShopRoute: typeof AuthenticatedShopRoute
   AuthenticatedSimulateRoute: typeof AuthenticatedSimulateRoute
+  AuthenticatedStreakRoute: typeof AuthenticatedStreakRoute
   AuthenticatedVaultRoute: typeof AuthenticatedVaultRoute
 }
 
@@ -442,6 +462,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSessionRoute: AuthenticatedSessionRoute,
   AuthenticatedShopRoute: AuthenticatedShopRoute,
   AuthenticatedSimulateRoute: AuthenticatedSimulateRoute,
+  AuthenticatedStreakRoute: AuthenticatedStreakRoute,
   AuthenticatedVaultRoute: AuthenticatedVaultRoute,
 }
 

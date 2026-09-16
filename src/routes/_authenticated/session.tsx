@@ -180,6 +180,9 @@ function SessionPage() {
         sfx("transition");
         if (!passed) {
           resetRun();
+        } else if (!useApp.getState().streakCelebrated) {
+          // First streak of their life — celebrate it before anything else.
+          void navigate({ to: "/streak" });
         } else if (lesson) {
           // Straight into today's practice chat — apply what was just learned.
           void navigate({ to: "/simulate", search: { daily: lesson.id } });
@@ -367,12 +370,18 @@ function SessionPage() {
           />
         </div>
 
-        <Link
-          to="/dashboard"
+        <button
+          onClick={() => {
+            timers.current.forEach(clearTimeout);
+            sfx("transition");
+            void navigate(
+              useApp.getState().streakCelebrated ? { to: "/dashboard" } : { to: "/streak" },
+            );
+          }}
           className="hud mt-4 rounded-2xl bg-primary py-4 text-center text-xs text-primary-foreground shadow-[0_5px_0_-1px_color-mix(in_oklab,var(--primary)_60%,black)] active:translate-y-[2px] active:shadow-none"
         >
           CLAIM {xp} XP
-        </Link>
+        </button>
 
         {celebrate && (
           <Completion

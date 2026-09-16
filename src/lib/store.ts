@@ -181,6 +181,9 @@ const initial = {
   mistakeMemory: {} as Record<string, MistakeNote>,
   tutorialStep: -1,
   tutorialDone: false,
+  streakGoal: null as number | null,
+  streakCelebrated: false,
+
 
 };
 

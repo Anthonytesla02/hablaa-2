@@ -47,6 +47,12 @@ export async function syncFromCloud(userId: string): Promise<void> {
     .limit(30);
 
   if (profileRow) {
+    // Never let a stale cloud row wipe progress that is already ahead locally
+    // (e.g. a debounced save that has not landed yet).
+    const keepMax = <K extends "xp" | "weeklyXp" | "credits" | "streak" | "longestStreak">(
+      key: K,
+      cloudValue: number,
+    ) => Math.max(cloudValue ?? 0, (store[key] as number) ?? 0);
     const cards: Record<string, SrsCard> = {};
     for (const c of cardRows ?? []) {
       cards[c.id] = {
@@ -75,12 +81,12 @@ export async function syncFromCloud(userId: string): Promise<void> {
         ...(store.profile?.startingLevel ? { startingLevel: store.profile.startingLevel } : {}),
         startedAt: profileRow.started_at,
       },
-      xp: profileRow.xp,
-      weeklyXp: profileRow.weekly_xp,
-      credits: profileRow.credits,
-      streak: profileRow.streak,
-      longestStreak: profileRow.longest_streak,
-      lastActiveDay: profileRow.last_active_day,
+      xp: keepMax("xp", profileRow.xp),
+      weeklyXp: keepMax("weeklyXp", profileRow.weekly_xp),
+      credits: keepMax("credits", profileRow.credits),
+      streak: keepMax("streak", profileRow.streak),
+      longestStreak: keepMax("longestStreak", profileRow.longest_streak),
+      lastActiveDay: profileRow.last_active_day ?? store.lastActiveDay,
       lastLoginDay: profileRow.last_login_day,
       freezes: profileRow.freezes,
       badges: profileRow.badges,
@@ -205,12 +211,23 @@ export async function syncToCloud(userId: string): Promise<void> {
 }
 
 let saveTimer: ReturnType<typeof setTimeout> | null = null;
+let pendingUserId: string | null = null;
 
 /** Debounced cloud save — call on state changes. */
 export function scheduleCloudSave(userId: string): void {
   if (!userId) return;
+  pendingUserId = userId;
   if (saveTimer) clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
+    saveTimer = null;
     void syncToCloud(userId);
-  }, 2000);
+  }, 700);
+}
+
+/** Save immediately if a debounced save is still waiting (tab hide / reload). */
+export function flushCloudSave(): void {
+  if (!pendingUserId || !saveTimer) return;
+  clearTimeout(saveTimer);
+  saveTimer = null;
+  void syncToCloud(pendingUserId);
 }

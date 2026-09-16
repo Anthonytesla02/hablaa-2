@@ -163,6 +163,7 @@ const initial = {
   lastActiveDay: null,
   longestStreak: 0,
   freezes: 0,
+  inventory: {} as Record<string, number>,
   badges: [] as string[],
   cards: {} as Record<string, SrsCard>,
   completedDays: [] as string[],

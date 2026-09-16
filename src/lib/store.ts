@@ -226,6 +226,17 @@ export const useApp = create<State>()(
         return true;
       },
 
+      purchase: (id, cost) => {
+        const s = get();
+        if (s.credits < cost) return false;
+        set({
+          credits: s.credits - cost,
+          inventory: { ...s.inventory, [id]: (s.inventory[id] ?? 0) + 1 },
+          freezes: id === "cover_extension" ? s.freezes + 1 : s.freezes,
+        });
+        return true;
+      },
+
       grantBadge: (id) =>
         set((s) => (s.badges.includes(id) ? s : { badges: [...s.badges, id] })),
 

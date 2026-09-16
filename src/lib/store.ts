@@ -96,6 +96,8 @@ type State = {
   startTutorial: () => void;
   setTutorialStep: (n: number) => void;
   endTutorial: () => void;
+  markStreakCelebrated: () => void;
+  commitStreakGoal: (days: number, reward: number) => void;
 };
 
 export type CompanionConfig = {

@@ -211,12 +211,23 @@ export async function syncToCloud(userId: string): Promise<void> {
 }
 
 let saveTimer: ReturnType<typeof setTimeout> | null = null;
+let pendingUserId: string | null = null;
 
 /** Debounced cloud save — call on state changes. */
 export function scheduleCloudSave(userId: string): void {
   if (!userId) return;
+  pendingUserId = userId;
   if (saveTimer) clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
+    saveTimer = null;
     void syncToCloud(userId);
-  }, 2000);
+  }, 700);
+}
+
+/** Save immediately if a debounced save is still waiting (tab hide / reload). */
+export function flushCloudSave(): void {
+  if (!pendingUserId || !saveTimer) return;
+  clearTimeout(saveTimer);
+  saveTimer = null;
+  void syncToCloud(pendingUserId);
 }

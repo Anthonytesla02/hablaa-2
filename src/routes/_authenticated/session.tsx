@@ -370,12 +370,18 @@ function SessionPage() {
           />
         </div>
 
-        <Link
-          to="/dashboard"
+        <button
+          onClick={() => {
+            timers.current.forEach(clearTimeout);
+            sfx("transition");
+            void navigate(
+              useApp.getState().streakCelebrated ? { to: "/dashboard" } : { to: "/streak" },
+            );
+          }}
           className="hud mt-4 rounded-2xl bg-primary py-4 text-center text-xs text-primary-foreground shadow-[0_5px_0_-1px_color-mix(in_oklab,var(--primary)_60%,black)] active:translate-y-[2px] active:shadow-none"
         >
           CLAIM {xp} XP
-        </Link>
+        </button>
 
         {celebrate && (
           <Completion

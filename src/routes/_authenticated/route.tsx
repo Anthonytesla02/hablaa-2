@@ -84,13 +84,3 @@ function AuthGate() {
 
   return <Outlet />;
 }
-
-/** Subscribe to Zustand store changes and trigger debounced cloud saves. */
-function useAppSubscribe(userId: string): () => void {
-  // Dynamic import to avoid circular dependency
-  let unsub: (() => void) | undefined;
-  import("@/lib/store").then(({ useApp }) => {
-    unsub = useApp.subscribe(() => scheduleCloudSave(userId));
-  });
-  return () => unsub?.();
-}

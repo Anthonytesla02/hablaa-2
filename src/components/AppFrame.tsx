@@ -1,6 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useHydrated } from "@tanstack/react-router";
-import { Flame, Map, MessageCircle, Dumbbell, Trophy, ShoppingBag, User } from "lucide-react";
+import { Flame, Map, MessageCircle, Dumbbell, Trophy, ShoppingBag, User, Coins } from "lucide-react";
 import type { ReactNode } from "react";
 import { HandlerAvatar } from "@/components/Handler";
 import { useApp, useLevel } from "@/lib/store";
@@ -40,7 +40,10 @@ export function HudBar() {
             {streak}
           </span>
           <span className="rounded-full bg-amber/20 px-2 py-1 text-foreground">{xp} XP</span>
-          <span className="rounded-full bg-secondary/20 px-2 py-1 text-foreground">{credits}</span>
+          <span className="flex items-center gap-1 rounded-full bg-secondary/20 px-2 py-1 text-foreground">
+            <Coins className="h-3.5 w-3.5" />
+            {credits}
+          </span>
         </div>
       </div>
     </header>
